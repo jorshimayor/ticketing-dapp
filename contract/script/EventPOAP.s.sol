@@ -2,19 +2,19 @@
 pragma solidity ^0.8.19;
 
 import "forge-std/Script.sol";
-import "./EventPOAP.sol";
-import "./MockEventTicket.sol";
+import "../src/EventPOAP.sol";
+import "../src/EventTicket.sol";
 
 contract DeployEventPOAP is Script {
     function run() public {
         // Deploy Mock EventTicket contract
-        MockEventTicket mockEventTicket = new MockEventTicket();
-
+        EventTicket eventTicket = new EventTicket("Event Ticket", "ETKT", 100, 0.01 ether);
+        
         // Deploy EventPOAP contract
-        EventPOAP eventPOAP = new EventPOAP("Proof of Attendance", "POAP", address(mockEventTicket));
-
+        EventPOAP eventPOAP = new EventPOAP("Proof of Attendance", "POAP", address(eventTicket));
+        
         // Output deployed contract addresses for verification
-        console.log("MockEventTicket deployed at:", address(mockEventTicket));
+        console.log("EventTicket deployed at:", address(eventTicket));
         console.log("EventPOAP deployed at:", address(eventPOAP));
     }
 }
