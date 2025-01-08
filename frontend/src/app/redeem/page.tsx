@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useWallet } from "../../components/WalletProvider";
 import { ethers } from "ethers";
 
-// Example: Replace with your deployed EventPOAP address & ABI
-const EVENT_POAP_ADDRESS = "0xEventPOAPContractAddress";
+const EVENT_POAP_ADDRESS = "0xc1B502126935c6eBaa78Ad915e86f487e1D2f356";
 const EVENT_POAP_ABI = ["function redeemPOAP(uint256 ticketTokenId) external"];
 
 export default function RedeemPage() {

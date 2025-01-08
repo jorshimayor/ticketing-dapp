@@ -12,7 +12,8 @@ contract DeployEventTicket is Script {
             "Event Ticket",  // name
             "ETKT",         // symbol
             100,            // maxSupply
-            0.01 ether      // price
+            0.01 ether,     // price
+            "https://api.example.com/metadata/" // baseTokenURI
         );
         
         vm.stopBroadcast();

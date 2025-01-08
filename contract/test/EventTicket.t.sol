@@ -19,7 +19,13 @@ contract EventTicketTest is Test {
         // Set owner to the test contract
         owner = address(this);
         // Deploy the contract
-        eventTicket = new EventTicket("Event Ticket", "ETKT", maxSupply, price);
+        eventTicket = new EventTicket(
+            "Event Ticket", 
+            "ETKT", 
+            maxSupply, 
+            price,
+            "https://test.com/metadata/"
+        );
     }
 
     function testOwnerCanToggleSale() public {

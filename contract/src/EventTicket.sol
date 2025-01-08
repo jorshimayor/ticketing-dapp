@@ -5,6 +5,7 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 contract EventTicket is ERC721, Ownable {
     uint256 public immutable maxSupply;
@@ -13,15 +14,19 @@ contract EventTicket is ERC721, Ownable {
     bool public saleActive;
     mapping(address => bool) public verifiers;
     mapping(uint256 => bool) public isVerified;
+    string public baseTokenURI;
+
 
     constructor(
         string memory _name,
         string memory _symbol,
         uint256 _maxSupply,
-        uint256 _price
+        uint256 _price,
+        string memory _baseTokenURI
     ) ERC721(_name, _symbol) Ownable(msg.sender) {
         maxSupply = _maxSupply;
         price = _price;
+        baseTokenURI = _baseTokenURI;
     }
 
     function toggleSale() external onlyOwner {
@@ -63,4 +68,14 @@ contract EventTicket is ERC721, Ownable {
     function _exists(uint256 tokenId) internal view returns (bool) {
         return tokenId > 0 && tokenId <= _tokenIdCounter;
     }
+
+    function setBaseURI(string memory _baseTokenURI) external onlyOwner {
+        baseTokenURI = _baseTokenURI;
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        require(_exists(tokenId), "Nonexistent token");
+        return string(abi.encodePacked(baseTokenURI, Strings.toString(tokenId), ".json"));
+    }
+
 }

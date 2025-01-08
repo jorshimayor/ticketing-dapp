@@ -33,7 +33,13 @@ contract EventPOAPTest is Test, ERC721ReceiverMock {
         user = address(new ERC721ReceiverMock());
         
         // Deploy the EventTicket contract
-        eventTicket = new EventTicket("Event Ticket", "ETKT", maxSupply, price);
+        eventTicket = new EventTicket(
+            "Event Ticket", 
+            "ETKT", 
+            maxSupply, 
+            price,
+            "https://test.com/metadata/"
+        );
         
         // Deploy the EventPOAP contract
         eventPOAP = new EventPOAP("Event POAP", "POAP", address(eventTicket));

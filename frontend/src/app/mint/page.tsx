@@ -5,7 +5,7 @@ import { useWallet } from "../../components/WalletProvider";
 import { ethers } from "ethers";
 
 // Example: Replace with your deployed EventTicket address & ABI
-const EVENT_TICKET_ADDRESS = "0xEventTicketContractAddress";
+const EVENT_TICKET_ADDRESS = "0x5Af1cbb37b255871c92432899be7CC2DA528FBE5";
 const EVENT_TICKET_ABI = [
   // Minimal ABI snippet
   "function mintTicket() payable",

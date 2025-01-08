@@ -23,8 +23,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const connectWallet = async () => {
     const web3Modal = new Web3Modal();
     const instance = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(instance);
-    const signer = provider.getSigner();
+    const provider = new ethers.BrowserProvider(instance);
+    const signer = await provider.getSigner();
     const address = await signer.getAddress();
     setAccount(address);
     setSigner(signer);
