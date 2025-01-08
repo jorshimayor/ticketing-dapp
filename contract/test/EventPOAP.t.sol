@@ -1,103 +1,100 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "forge-std/Test.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "../src/EventPOAP.sol";
+import {Test} from "forge-std/Test.sol";
+import {EventPOAP} from "../src/EventPOAP.sol";
+import {EventTicket} from "../src/EventTicket.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-contract MockEventTicket is ERC721, Ownable {
-    uint256 public nextTokenId;
-
-    constructor() ERC721("Event Ticket", "ETICKET") Ownable(msg.sender) {}
-    
-    // Mint function to mint tickets to users
-    function mint(address to) external onlyOwner {
-        _safeMint(to, nextTokenId);
-        nextTokenId++;
+contract ERC721ReceiverMock is IERC721Receiver {
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes memory
+    ) public virtual override returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 }
 
-contract EventPOAPTest is Test {
-    EventPOAP public eventPOAP;
-    MockEventTicket public mockEventTicket;
-    address public user;
-    address public owner = address(this);
+contract EventPOAPTest is Test, ERC721ReceiverMock {
+    EventPOAP private eventPOAP;
+    EventTicket private eventTicket;
     
-    // Setting up the environment for each test case
+    address private owner;
+    address private user;
+    uint256 private maxSupply = 5;
+    uint256 private price = 0.01 ether;
+
     function setUp() public {
-        // Deploy MockEventTicket contract
-        mockEventTicket = new MockEventTicket();
+        // Set owner to the test contract
+        owner = address(this);
+        // Create user as ERC721ReceiverMock contract
+        user = address(new ERC721ReceiverMock());
         
-        // Deploy EventPOAP contract, passing the address of the mockEventTicket contract
-        eventPOAP = new EventPOAP("Proof of Attendance", "POAP", address(mockEventTicket));
+        // Deploy the EventTicket contract
+        eventTicket = new EventTicket("Event Ticket", "ETKT", maxSupply, price);
         
-        // Create a test user address
-        user = address(0x123);
+        // Deploy the EventPOAP contract
+        eventPOAP = new EventPOAP("Event POAP", "POAP", address(eventTicket));
     }
-    
-    // Test minting of a POAP NFT by redeeming a ticket
+
     function testRedeemPOAP() public {
-        // Mint a ticket for the user
-        mockEventTicket.mint(user);
-        // Check that the user does not own a POAP initially
-        assertEq(eventPOAP.balanceOf(user), 0);
-        // Redeem POAP NFT for the user
-        vm.startPrank(user);
-        eventPOAP.redeemPOAP(0);
-        vm.stopPrank();
-        // Verify that the user now owns a POAP NFT
-        assertEq(eventPOAP.balanceOf(user), 1);
-        assertEq(eventPOAP.ownerOf(0), user);
+        // Enable sale and mint a ticket
+        eventTicket.toggleSale();
+        vm.deal(user, price);
+        vm.prank(user);
+        eventTicket.mintTicket{value: price}();
+
+        // Redeem POAP
+        vm.prank(user);
+        eventPOAP.redeemPOAP(1);
+
+        // Check that user received the POAP
+        assertEq(eventPOAP.ownerOf(1), user);
+        assertTrue(eventPOAP.ticketRedeemed(1));
     }
-    
-    // Test that a user cannot redeem a POAP if they don't own the ticket
-    function testCannotRedeemWithoutTicketOwnership() public {
-        // Mint a ticket to the contract owner, not the user
-        mockEventTicket.mint(owner);
-        // Try redeeming POAP as the user (who does not own the ticket)
-        vm.startPrank(user);
-        vm.expectRevert("Not ticket owner");
-        eventPOAP.redeemPOAP(0);
-        vm.stopPrank();
-    }
-    
-    // Test that a ticket can only be redeemed once
+
     function testCannotRedeemTicketTwice() public {
-        // Mint a ticket for the user
-        mockEventTicket.mint(user);
-        // Redeem POAP the first time
-        vm.startPrank(user);
-        eventPOAP.redeemPOAP(0);
-        vm.stopPrank();
-        // Try redeeming the same ticket again
-        vm.startPrank(user);
+        // Enable sale and mint a ticket
+        eventTicket.toggleSale();
+        vm.deal(user, price);
+        vm.prank(user);
+        eventTicket.mintTicket{value: price}();
+
+        // Redeem POAP first time
+        vm.prank(user);
+        eventPOAP.redeemPOAP(1);
+
+        // Try to redeem again
+        vm.prank(user);
         vm.expectRevert("Ticket already redeemed");
-        eventPOAP.redeemPOAP(0);
-        vm.stopPrank();
+        eventPOAP.redeemPOAP(1);
     }
-    
-    // Test that the owner can update the EventTicket contract address
+
+    function testCannotRedeemWithoutTicketOwnership() public {
+        // Enable sale and mint a ticket to owner
+        eventTicket.toggleSale();
+        eventTicket.mintTicket{value: price}();
+
+        // Try to redeem with different address
+        vm.prank(user);
+        vm.expectRevert("Not ticket owner");
+        eventPOAP.redeemPOAP(1);
+    }
+
     function testOwnerCanUpdateEventTicketContract() public {
-        // Deploy a new MockEventTicket contract
-        MockEventTicket newMockEventTicket = new MockEventTicket();
-        // The owner updates the EventTicket contract address
-        vm.startPrank(owner);
-        eventPOAP.updateEventTicketContract(address(newMockEventTicket));
-        vm.stopPrank();
-        // Verify that the new address is set
-        assertEq(eventPOAP.eventTicketContract(), address(newMockEventTicket));
+        address newContract = address(0x789);
+        eventPOAP.updateEventTicketContract(newContract);
+        assertEq(eventPOAP.eventTicketContract(), newContract);
     }
-    
-    // Test that only the owner can update the EventTicket contract address
+
     function testNonOwnerCannotUpdateEventTicketContract() public {
-        // Deploy a new MockEventTicket contract
-        MockEventTicket newMockEventTicket = new MockEventTicket();
-        // Try updating the EventTicket contract address as a non-owner
-        vm.startPrank(user);
-        vm.expectRevert("Ownable: caller is not the owner");
-        eventPOAP.updateEventTicketContract(address(newMockEventTicket));
-        vm.stopPrank();
+        address newContract = address(0x789);
+        vm.prank(user);
+        vm.expectRevert(
+            abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", user)
+        );
+        eventPOAP.updateEventTicketContract(newContract);
     }
 }
