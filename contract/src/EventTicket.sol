@@ -7,6 +7,12 @@ import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/Messa
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
+/**
+ * @title EventTicket
+ * @dev A contract for managing event ticket NFTs with verification capabilities
+ * @notice This contract allows users to purchase event tickets as NFTs and have them verified by authorized verifiers
+ */
+
 contract EventTicket is ERC721, Ownable {
     uint256 public immutable maxSupply;
     uint256 public immutable price;
@@ -15,7 +21,6 @@ contract EventTicket is ERC721, Ownable {
     mapping(address => bool) public verifiers;
     mapping(uint256 => bool) public isVerified;
     string public baseTokenURI;
-
 
     constructor(
         string memory _name,
@@ -77,5 +82,4 @@ contract EventTicket is ERC721, Ownable {
         require(_exists(tokenId), "Nonexistent token");
         return string(abi.encodePacked(baseTokenURI, Strings.toString(tokenId), ".json"));
     }
-
 }
