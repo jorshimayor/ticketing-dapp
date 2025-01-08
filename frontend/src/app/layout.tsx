@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Aleo, Yrsa } from "next/font/google";
 import "./globals.css";
 import { WalletProvider } from "@/components/WalletProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const aleo = Aleo({
+  variable: "--font-aleo",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const yrsa = Yrsa({
+  variable: "--font-yrsa",
   subsets: ["latin"],
 });
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${aleo.variable} ${yrsa.variable} antialiased`}
       >
         <WalletProvider>{children}</WalletProvider>
       </body>
