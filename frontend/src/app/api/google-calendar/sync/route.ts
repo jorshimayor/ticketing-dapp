@@ -27,7 +27,7 @@ export async function POST() {
     // Authenticate using a service account
     const jwtClient = new JWT({
       email: GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      key: GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Ensure proper line breaks
+      key: GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
       scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
     });
 
@@ -37,7 +37,7 @@ export async function POST() {
     const res = await calendar.events.list({
       auth: jwtClient,
       calendarId: GOOGLE_CALENDAR_ID,
-      maxResults: 10, // Adjust as needed
+      maxResults: 10,
       singleEvents: true,
       orderBy: 'startTime',
     });
@@ -48,11 +48,13 @@ export async function POST() {
 
     events.forEach((event) => {
       if (event.attendees) {
-        const eventAttendees = event.attendees.map((att) => ({
-          email: att.email,
-          displayName: att.displayName,
-          responseStatus: att.responseStatus,
-        }));
+        const eventAttendees = event.attendees
+          .filter((att) => att.email)
+          .map((att) => ({
+            email: att.email as string,
+            displayName: att.displayName || undefined,
+            responseStatus: att.responseStatus || undefined,
+          }));
         attendees = attendees.concat(eventAttendees);
       }
     });
@@ -83,10 +85,10 @@ export async function POST() {
     }
 
     return NextResponse.json({ success: true, count: uniqueAttendees.length });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error);
     return NextResponse.json(
-      { error: error.message || 'An error occurred while syncing attendees.' },
+      { error: (error as Error).message || 'An error occurred while syncing attendees.' },
       { status: 500 }
     );
   }
