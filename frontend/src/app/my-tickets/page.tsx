@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { ethers } from 'ethers'
+import { ethers } from "ethers";
 
 import { useConnectWallet } from "@web3-onboard/react";
 import WalletButton from "../../components/walletButton";
@@ -35,9 +35,12 @@ export default function MyTicketsPage() {
       setTickets([]);
 
       try {
-       const ethersProvider = new ethers.BrowserProvider(wallet.provider, 'any')
-       const signer = await ethersProvider.getSigner()
-       const contract = new ethers.Contract(
+        const ethersProvider = new ethers.BrowserProvider(
+          wallet.provider,
+          "any"
+        );
+        const signer = await ethersProvider.getSigner();
+        const contract = new ethers.Contract(
           EVENT_TICKET_ADDRESS,
           eventTicketABI,
           signer
@@ -73,7 +76,7 @@ export default function MyTicketsPage() {
 
         setTickets(fetchedTickets);
       } catch (fetchError: unknown) {
-        console.error("Error fetching tickets:", fetchError);
+        console.error("Error fetching tickets: ", fetchError);
         setError("Failed to fetch your tickets.");
       } finally {
         setLoading(false);

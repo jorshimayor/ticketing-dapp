@@ -3,6 +3,7 @@ import { Aleo, Yrsa } from "next/font/google";
 import Web3Provider from "@/components/providers/Web3Provider";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/footer";
 
 const aleo = Aleo({
   variable: "--font-aleo",
@@ -26,10 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${aleo.variable} ${yrsa.variable} antialiased`}>
+      <body className={`${aleo.variable} ${yrsa.variable} antialias`}>
         <Web3Provider>
           <Navbar />
           {children}
+          <Footer />
         </Web3Provider>
       </body>
     </html>

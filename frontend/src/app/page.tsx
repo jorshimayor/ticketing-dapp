@@ -2,69 +2,111 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <body className="h-screen md:h-full">
-      <header className="bg-blue-600 text-white py-6">
-        <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold">Welcome to the Ticketing DApp</h1>
-          <p className="mt-2 text-lg">
-            Secure your spot and mint your NFT ticket!
-          </p>
-        </div>
-      </header>
-
-      <main className="container mx-auto my-10">
-        <section className="text-center">
-          <h2 className="text-3xl font-semibold mb-6">How It Works</h2>
-          <div className="flex flex-wrap justify-center">
-            <div className="w-full md:w-1/4 p-4">
-              <Link href="https://lu.ma" target="_blank">
-                <div className="flex flex-col items-center justify-center h-full bg-white shadow-lg rounded-lg p-6">
-                  <h3 className="text-xl font-semibold">1. Register</h3>
-                  <p>Follow the link to sign up for an event on Luma then mint your NFT ticket here.</p>
-                </div>
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-grow bg-gray-100">
+        <section className="bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
+              Welcome to the NFT Ticketing Experience
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              Secure your spot at our exclusive event by minting your unique NFT
+              ticket. Enjoy seamless redemption for POAPs upon attendance.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <Link href="/mint">
+                <p className="bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-700 transition duration-200">
+                  Mint Your Ticket
+                </p>
               </Link>
-            </div>
-            <div className="w-full md:w-1/4 p-4">
-              <Link href="/mint" className="">
-                <div className="flex flex-col items-center justify-center h-full bg-white shadow-lg rounded-lg p-6">
-                  <h3 className="text-xl font-semibold">2. Mint NFT</h3>
-                  <p>Mint your NFT ticket once you register.</p>
-                </div>
-              </Link>
-            </div>
-            <div className="w-full md:w-1/4 p-4">
-              <Link href="/redeem" className="">
-                <div className="flex flex-col items-center justify-center h-full bg-white shadow-lg rounded-lg p-6">
-                  <h3 className="text-xl font-semibold">3. Get POAP</h3>
-                  <p>
-                    Exchange your NFT on-site for a POAP NFT to prove
-                    attendance.
-                  </p>
-                </div>
-              </Link>
-            </div>
-            <div className="w-full md:w-1/4 p-4">
-              <Link href="/mint" className="">
-                <div className="flex flex-col items-center justify-center h-full bg-white shadow-lg rounded-lg p-6">
-                  <h3 className="text-xl font-semibold">4. Update Metadata</h3>
-                  <p>Update the metadata for your event.</p>
-                </div>
+              <Link href="/my-tickets">
+                <p className="bg-green-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-green-700 transition duration-200">
+                  View My Tickets
+                </p>
               </Link>
             </div>
           </div>
         </section>
 
-        <section className="text-center mt-10">
-          <h2 className="text-3xl font-semibold mb-6">Ready to Get Started?</h2>
-          <Link
-            href="https://lu.ma"
-            target="_blank"
-            className="bg-blue-600 text-white py-3 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-300"
-          >
-            Sign Up Now
-          </Link>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-white shadow-lg rounded-lg p-6 text-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-coins mx-auto"
+            >
+              <circle cx="8" cy="8" r="6" />
+              <path d="M18.09 10.37A6 6 0 1 1 10.34 18" />
+              <path d="M7 6h1v4" />
+              <path d="m16.71 13.88.7.71-2.82 2.82" />
+            </svg>
+            <h3 className="text-xl font-semibold my-2">Secure Minting</h3>
+            <p className="text-gray-600">
+              Mint your NFT tickets securely using Ethereum blockchain
+              technology, ensuring authenticity and ownership.
+            </p>
+          </div>
+
+          <div className="bg-white shadow-lg rounded-lg p-6 text-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-tickets-plane mx-auto"
+            >
+              <path d="M10.5 17h1.227a2 2 0 0 0 1.345-.52L18 12" />
+              <path d="m12 13.5 3.75.5" />
+              <path d="m4.5 8 10.58-5.06a1 1 0 0 1 1.342.488L18.5 8" />
+              <path d="M6 10V8" />
+              <path d="M6 14v1" />
+              <path d="M6 19v2" />
+              <rect x="2" y="8" width="20" height="13" rx="2" />
+            </svg>
+            <h3 className="text-xl font-semibold my-2">POAP Redemption</h3>
+            <p className="text-gray-600">
+              Redeem your NFT tickets for Proof of Attendance Protocol (POAP)
+              tokens, commemorating your participation.
+            </p>
+          </div>
+
+          <div className="bg-white shadow-lg rounded-lg p-6 text-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-user-round-check mx-auto"
+            >
+              <path d="M2 21a8 8 0 0 1 13.292-6" />
+              <circle cx="10" cy="8" r="5" />
+              <path d="m16 19 2 2 4-4" />
+            </svg>
+            <h3 className="text-xl font-semibold my-2">Attendee Management</h3>
+            <p className="text-gray-600">
+              Admins can effortlessly manage attendee lists through CSV uploads
+              or integrate with Google Calendar for automated syncing.
+            </p>
+          </div>
         </section>
       </main>
-    </body>
+    </div>
   );
 }
