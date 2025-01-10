@@ -1,29 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { useWallet } from "../../components/WalletProvider";
 import { ethers } from "ethers";
 
-// Example: Replace with your deployed EventTicket address & ABI
-const EVENT_TICKET_ADDRESS = "0x5Af1cbb37b255871c92432899be7CC2DA528FBE5";
-const EVENT_TICKET_ABI = [
-  // Minimal ABI snippet
-  "function mintTicket() payable",
-  "function price() view returns (uint256)",
-  "function saleActive() view returns (bool)",
-];
+import { EVENT_TICKET_ADDRESS, eventTicketABI } from "@/constants";
+import { useConnectWallet } from "@web3-onboard/react";
 
 export default function MintPage() {
-  const { account, connectWallet, signer } = useWallet();
+  const [wallet, connectWallet, signer] = useConnectWallet();
   const [loading, setLoading] = useState(false);
 
   const handleMint = async () => {
     if (!signer) return alert("No signer found. Connect wallet first.");
     try {
       setLoading(true);
+      if (!wallet?.wallet?.provider) return;
+      const provider = new ethers.BrowserProvider(wallet.wallet.provider);
+
+      const signer = await provider.getSigner();
       const contract = new ethers.Contract(
         EVENT_TICKET_ADDRESS,
-        EVENT_TICKET_ABI,
+        eventTicketABI,
         signer
       );
       const ticketPrice = await contract.price();
@@ -41,8 +38,8 @@ export default function MintPage() {
   return (
     <div>
       <h1>Mint Your Ticket</h1>
-      {!account ? (
-        <button onClick={connectWallet}>Connect Wallet</button>
+      {!wallet ? (
+        <button onClick={() => connectWallet()}>Connect Wallet</button>
       ) : (
         <button onClick={handleMint} disabled={loading}>
           {loading ? "Minting..." : "Mint Ticket"}

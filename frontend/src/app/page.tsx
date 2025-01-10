@@ -1,10 +1,8 @@
 import Link from "next/link";
-import Navbar from "../components/Navbar";
 
 export default function Home() {
   return (
     <body className="h-screen md:h-full">
-      <Navbar />
       <header className="bg-blue-600 text-white py-6">
         <div className="container mx-auto text-center">
           <h1 className="text-4xl font-bold">Welcome to the Ticketing DApp</h1>
@@ -18,7 +16,7 @@ export default function Home() {
         <section className="text-center">
           <h2 className="text-3xl font-semibold mb-6">How It Works</h2>
           <div className="flex flex-wrap justify-center">
-            <div className="w-full md:w-1/3 p-4">
+            <div className="w-full md:w-1/4 p-4">
               <Link href="https://lu.ma" target="_blank">
                 <div className="flex flex-col items-center justify-center h-full bg-white shadow-lg rounded-lg p-6">
                   <h3 className="text-xl font-semibold">1. Register</h3>
@@ -26,7 +24,7 @@ export default function Home() {
                 </div>
               </Link>
             </div>
-            <div className="w-full md:w-1/3 p-4">
+            <div className="w-full md:w-1/4 p-4">
               <Link href="/mint" className="">
                 <div className="flex flex-col items-center justify-center h-full bg-white shadow-lg rounded-lg p-6">
                   <h3 className="text-xl font-semibold">2. Mint NFT</h3>
@@ -34,7 +32,7 @@ export default function Home() {
                 </div>
               </Link>
             </div>
-            <div className="w-full md:w-1/3 p-4">
+            <div className="w-full md:w-1/4 p-4">
               <Link href="/redeem" className="">
                 <div className="flex flex-col items-center justify-center h-full bg-white shadow-lg rounded-lg p-6">
                   <h3 className="text-xl font-semibold">3. Get POAP</h3>
@@ -42,6 +40,14 @@ export default function Home() {
                     Exchange your NFT on-site for a POAP NFT to prove
                     attendance.
                   </p>
+                </div>
+              </Link>
+            </div>
+            <div className="w-full md:w-1/4 p-4">
+              <Link href="/mint" className="">
+                <div className="flex flex-col items-center justify-center h-full bg-white shadow-lg rounded-lg p-6">
+                  <h3 className="text-xl font-semibold">4. Update Metadata</h3>
+                  <p>Update the metadata for your event.</p>
                 </div>
               </Link>
             </div>

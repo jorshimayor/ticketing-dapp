@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Aleo, Yrsa } from "next/font/google";
+import Web3Provider from "@/components/providers/Web3Provider";
 import "./globals.css";
-import { WalletProvider } from "@/components/WalletProvider";
+import Navbar from "@/components/Navbar";
 
 const aleo = Aleo({
   variable: "--font-aleo",
@@ -25,10 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${aleo.variable} ${yrsa.variable} antialiased`}
-      >
-        <WalletProvider>{children}</WalletProvider>
+      <body className={`${aleo.variable} ${yrsa.variable} antialiased`}>
+        <Web3Provider>
+          <Navbar />
+          {children}
+        </Web3Provider>
       </body>
     </html>
   );

@@ -1,25 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { useWallet } from "../../components/WalletProvider";
+import { useConnectWallet } from "@web3-onboard/react";
 import { ethers } from "ethers";
-
-const EVENT_POAP_ADDRESS = "0xc1B502126935c6eBaa78Ad915e86f487e1D2f356";
-const EVENT_POAP_ABI = ["function redeemPOAP(uint256 ticketTokenId) external"];
+import { EVENT_POAP_ADDRESS, eventPOAPABI } from "@/constants";
 
 export default function RedeemPage() {
-  const { account, connectWallet, signer } = useWallet();
+  const [wallet, connectWallet, signer] = useConnectWallet();
   const [ticketId, setTicketId] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const handleRedeem = async () => {
-    if (!signer || !ticketId) return;
+    if (!wallet?.wallet?.provider) return;
     try {
       setLoading(true);
       const contract = new ethers.Contract(
         EVENT_POAP_ADDRESS,
-        EVENT_POAP_ABI,
-        signer
+        eventPOAPABI,
+        await new ethers.BrowserProvider(wallet.wallet.provider).getSigner()
       );
       const tx = await contract.redeemPOAP(ticketId);
       await tx.wait();
@@ -35,8 +33,8 @@ export default function RedeemPage() {
   return (
     <div>
       <h1>Redeem Your POAP</h1>
-      {!account ? (
-        <button onClick={connectWallet}>Connect Wallet</button>
+      {!wallet ? (
+        <button onClick={() => connectWallet()}>Connect Wallet</button>
       ) : (
         <div>
           <input

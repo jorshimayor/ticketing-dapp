@@ -11,7 +11,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
  * @title EventTicket
  * @dev A contract for managing event ticket NFTs with verification capabilities
  * @notice This contract allows users to purchase event tickets as NFTs and have them verified by authorized verifiers
- */
+*/
 
 contract EventTicket is ERC721, Ownable {
     uint256 public immutable maxSupply;

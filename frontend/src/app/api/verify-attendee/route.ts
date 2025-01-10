@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../lib/superbase';
+import { supabase } from '../../../lib/supabase';
 
+// POST handler to verify attendee
 export async function POST(request: Request) {
   const { email } = await request.json();
   if (!email) {
     return NextResponse.json({ error: 'Email is required' }, { status: 400 });
   }
 
+  // Query Supabase for the attendee
   const { data, error } = await supabase
     .from('attendees')
     .select('*')
@@ -21,6 +23,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Attendee not found.' }, { status: 404 });
   }
 
-  // If they've minted, or if there's another restriction, handle that here.
+  if (data) {
+    return NextResponse.json({ error: 'Attendee has already minted their ticket.' }, { status: 400 });
+  }
+
   return NextResponse.json({ success: true, attendee: data });
 }

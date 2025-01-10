@@ -22,5 +22,5 @@ contract DeployEventTicket is Script {
 }
 
 // Deployer: 0xDEFdb1c256FC638408a21044015b7b3fdD2E19f1
-// Deployed to: 0x5Af1cbb37b255871c92432899be7CC2DA528FBE5
-// Transaction hash: 0x58825bc76e8395464788a0272da12b03d42b584e51a94394273ea5b92fb5b5a2
+// Deployed to: 0x06785D59FAE4a2CB267B0afE3Ce6F1896872Bb48
+// Transaction hash: 0x863a3b1538cea1827073fef5aaeb14426070bc6c741476145fe6dd30d1f6c7a0
