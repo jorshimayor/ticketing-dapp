@@ -64,8 +64,8 @@ export default function AdminPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+    <main className="bg-white flex h-screen items-center justify-center p-4">
+      <div className="bg-gray-200 shadow-md rounded-lg p-8 w-full max-w-md">
         <h1 className="text-2xl font-semibold mb-6 text-center">Admin Panel</h1>
 
         <div className="mb-4">
@@ -86,7 +86,7 @@ export default function AdminPage() {
           disabled={loading || !file}
           className={`w-full py-2 px-4 rounded-md text-white font-semibold ${
             loading || !file
-              ? "bg-blue-300 cursor-not-allowed"
+              ? "bg-blue-400 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
           } transition duration-200`}
         >

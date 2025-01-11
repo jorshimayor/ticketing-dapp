@@ -89,12 +89,16 @@ export default function MyTicketsPage() {
   return (
     <main className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-4">My Tickets</h1>
+        <h1 className="text-2xl font-semibold mb-4 text-center">My Tickets</h1>
 
         {!wallet && (
-          <div className="bg-yellow-100 text-yellow-700 p-4 rounded mb-6">
-            <p>You need to connect your wallet to view your tickets.</p>
-            <WalletButton />
+          <div className="bg-green-700 text-gray-200 p-4 rounded mb-6">
+            <p className="mb-10 text-center mx-auto">
+              You need to connect your wallet to view your tickets.
+            </p>
+            <div className="flex justify-center items-center bg-gray-700 rounded-md p-2 w-40 mx-auto cursor-pointer hover:bg-blue-500 transition duration-200">
+              <WalletButton />
+            </div>
           </div>
         )}
 
