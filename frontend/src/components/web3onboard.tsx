@@ -1,8 +1,7 @@
 "use client";
-
 import { init } from "@web3-onboard/react";
+import type { Chain } from "@web3-onboard/common";
 import injectedModule from "@web3-onboard/injected-wallets";
-import { Chain } from "@web3-onboard/core";
 
 const injected = injectedModule();
 

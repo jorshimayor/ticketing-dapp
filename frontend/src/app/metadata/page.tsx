@@ -129,7 +129,7 @@ export default function MetadataPage() {
         date: updatedDetails.date.toNumber(),
         ipfsHash: updatedDetails.ipfsHash,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error updating event details:", err);
       setError("Failed to update event details. Are you the owner?");
     } finally {

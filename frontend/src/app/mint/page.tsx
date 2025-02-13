@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+
 import { ethers, formatEther } from "ethers";
 import { useConnectWallet } from "@web3-onboard/react";
 
@@ -14,7 +16,9 @@ export default function MintPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [ticketPrice, setTicketPrice] = useState<string>("0.0");
   const [txHash, setTxHash] = useState<string>("");
+  const [mintingError, setMintingError] = useState<string>("");
 
+  // Fetch ticket price when wallet is connected
   React.useEffect(() => {
     const fetchPrice = async () => {
       if (wallet) {
@@ -31,13 +35,15 @@ export default function MintPage() {
           const price = await contract.price();
           setTicketPrice(formatEther(price));
         } catch (error) {
-          console.error("Error fetching ticket price:", error);
+          console.error("Error fetching ticket price: ", error);
+          setMintingError("Failed to fetch ticket price. Please try again.");
         }
       }
     };
     fetchPrice();
   }, [wallet]);
 
+  // Verify attendee status
   const verifyAttendee = async () => {
     if (!email) {
       setVerificationError("Please enter your email.");
@@ -60,8 +66,9 @@ export default function MintPage() {
       if (response.ok && result.success) {
         setIsVerified(true);
       } else {
-        setIsVerified(false);
-        setVerificationError(result.error || "Verification failed.");
+        setVerificationError(
+          result.error || "Verification failed. Please check your email."
+        );
       }
     } catch (error) {
       console.error("Verification error:", error);
@@ -71,6 +78,7 @@ export default function MintPage() {
     }
   };
 
+  // Mint NFT ticket
   const mintTicket = async () => {
     if (!wallet) {
       alert("Please connect your wallet first.");
@@ -84,6 +92,7 @@ export default function MintPage() {
 
     setLoading(true);
     setTxHash("");
+    setMintingError("");
 
     try {
       const ethersProvider = new ethers.BrowserProvider(wallet.provider, "any");
@@ -94,18 +103,35 @@ export default function MintPage() {
         signer
       );
 
+      // Fetch ticket price
       const price = await contract.price();
-      const tx = await contract.mintTicket({ value: price });
+
+      // Estimate gas for the transaction
+      const gasEstimate = await contract.mintTicket.estimateGas({
+        value: price,
+      });
+
+      // Send transaction with gas estimate
+      const tx = await contract.mintTicket({
+        value: price,
+        gasLimit: gasEstimate,
+      });
       const receipt = await tx.wait();
 
-      setTxHash(receipt.transactionHash);
-      alert("Ticket minted successfully!");
+      if (receipt.status === 1) {
+        setTxHash(receipt.transactionHash);
+        alert("Ticket minted successfully!");
+      } else {
+        setMintingError("Transaction failed. Please try again.");
+      }
     } catch (error: unknown) {
       console.error("Minting error:", error);
       if ((error as { code?: number }).code === 4001) {
-        alert("Transaction rejected by user.");
+        setMintingError("Transaction rejected by user.");
       } else {
-        alert("Failed to mint ticket.");
+        setMintingError(
+          "Failed to mint ticket. Please check your wallet balance and try again."
+        );
       }
     } finally {
       setLoading(false);
@@ -125,6 +151,7 @@ export default function MintPage() {
               Secure Your Spot
             </h2>
 
+            {/* Verification Section */}
             <section className="mb-8">
               <h3 className="text-xl font-semibold mb-4">
                 Verify Your Attendee Status
@@ -157,11 +184,12 @@ export default function MintPage() {
               )}
             </section>
 
+            {/* Minting Section */}
             <section>
               <h3 className="text-xl font-semibold mb-4">Mint Your Ticket</h3>
               <div className="mb-4">
                 <p className="text-gray-700">
-                  <strong>Ticket Price:</strong> {ticketPrice} ETH
+                  <strong>Ticket Price: </strong> {ticketPrice} ETH
                 </p>
               </div>
               <button
@@ -173,17 +201,20 @@ export default function MintPage() {
               >
                 {loading ? "Minting..." : "Mint Ticket"}
               </button>
+              {mintingError && (
+                <p className="mt-4 text-red-600 text-sm">{mintingError}</p>
+              )}
               {txHash && (
                 <p className="mt-4 text-blue-600 text-sm">
                   View Transaction:{" "}
-                  <a
+                  <Link
                     href={`https://etherscan.io/tx/${txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline"
                   >
                     {txHash}
-                  </a>
+                  </Link>
                 </p>
               )}
             </section>

@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 import { EVENT_POAP_ADDRESS, eventPOAPABI } from "@/constants";
 
 export default function RedeemPage() {
-  const [wallet, connectWallet, signer] = useConnectWallet();
+  const [wallet, connectWallet] = useConnectWallet();
   const [ticketId, setTicketId] = useState<string>("");
   const [loading, setLoading] = useState(false);
 

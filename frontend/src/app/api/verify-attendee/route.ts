@@ -9,15 +9,11 @@ export async function POST(request: Request) {
   }
 
   // Query Supabase for the attendee
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('attendees')
     .select('*')
     .eq('email', email.toLowerCase())
     .single();
-
-  if (error) {
-    return NextResponse.json({ error: 'Database error', details: error }, { status: 500 });
-  }
 
   if (!data) {
     return NextResponse.json({ error: 'Attendee not found.' }, { status: 404 });
