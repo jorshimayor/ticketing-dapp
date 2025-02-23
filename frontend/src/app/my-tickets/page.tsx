@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { ethers } from "ethers";
-
 import { useConnectWallet } from "@web3-onboard/react";
 import WalletButton from "../../components/walletButton";
 
@@ -18,6 +17,7 @@ interface Ticket {
     name?: string;
     description?: string;
   } | null;
+  verified: boolean;
 }
 
 export default function MyTicketsPage() {
@@ -46,31 +46,37 @@ export default function MyTicketsPage() {
           signer
         );
 
-        const balance = await contract.balanceOf(wallet.accounts[0].address);
-        const ticketIds: number[] = [];
-
-        for (let i = 0; i < balance.toNumber(); i++) {
-          const tokenId = await contract.tokenOfOwnerByIndex(
-            wallet.accounts[0].address,
-            i
-          );
-          ticketIds.push(tokenId.toNumber());
-        }
-
+        // Get maxSupply from the contract
+        const maxSupplyBN = await contract.maxSupply();
+        const maxSupply = Number(maxSupplyBN);
+        const userAddress = wallet.accounts[0].address.toLowerCase();
         const fetchedTickets: Ticket[] = [];
 
-        for (const id of ticketIds) {
+        // Iterate through token IDs 1 to maxSupply
+        for (let tokenId = 1; tokenId <= maxSupply; tokenId++) {
           try {
-            const tokenURI = await contract.tokenURI(id);
-            const response = await fetch(tokenURI);
-            const metadata = await response.json();
-            fetchedTickets.push({ tokenId: id, metadata });
-          } catch (metadataError) {
-            console.error(
-              `Error fetching metadata for token ID ${id}:`,
-              metadataError
-            );
-            fetchedTickets.push({ tokenId: id, metadata: null });
+            // If token doesn't exist, ownerOf will revert; we catch and continue
+            const owner = await contract.ownerOf(tokenId);
+            if (owner.toLowerCase() === userAddress) {
+              // Get verification status
+              const verified: boolean = await contract.isVerified(tokenId);
+              // Attempt to fetch metadata from tokenURI
+              let metadata = null;
+              try {
+                const tokenURI = await contract.tokenURI(tokenId);
+                const response = await fetch(tokenURI);
+                metadata = await response.json();
+              } catch (metadataError) {
+                console.error(
+                  `Error fetching metadata for token ID ${tokenId}:`,
+                  metadataError
+                );
+              }
+              fetchedTickets.push({ tokenId, metadata, verified });
+            }
+          } catch (e) {
+            // Token doesn't exist (or wasn't minted yet), so ignore
+            continue;
           }
         }
 
@@ -171,6 +177,9 @@ export default function MyTicketsPage() {
                       {ticket.metadata.description}
                     </p>
                   )}
+                  <p className="text-sm mb-2">
+                    Verified: {ticket.verified ? "Yes" : "No"}
+                  </p>
                   <Link
                     href={`/redeem?ticketId=${ticket.tokenId}`}
                     className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"

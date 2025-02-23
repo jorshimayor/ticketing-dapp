@@ -33,6 +33,7 @@ export const web3Onboard = init({
     recommendedInjectedWallets: [
       { name: "Coinbase", url: "https://wallet.coinbase.com/" },
       { name: "MetaMask", url: "https://metamask.io" },
+      { name: "Kaia Wallet", url: "https://kaiawallet.com" },
     ],
   },
 });

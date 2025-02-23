@@ -21,11 +21,11 @@ const Navbar = () => {
         <Link href="/my-tickets">
           <p className="text-gray-200 hover:text-blue-600">My Tickets</p>
         </Link>
+        <Link href="/redeem">
+          <p className="text-gray-200 hover:text-blue-600">Redeem</p>
+        </Link>
         <Link href="/admin">
           <p className="text-gray-200 hover:text-blue-600">Admin</p>
-        </Link>
-        <Link href="/metadata">
-          <p className="text-gray-200 hover:text-blue-600">Metadata</p>
         </Link>
       </div>
 

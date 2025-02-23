@@ -21,6 +21,8 @@ contract DeployEventPOAP is Script {
     }
 }
 
-// Deployer: 0xDEFdb1c256FC638408a21044015b7b3fdD2E19f1
-// Deployed to: 0xc1B502126935c6eBaa78Ad915e86f487e1D2f356
-// Transaction hash: 0xc5c51fae657bfa9592274f4756d584f6ced7fc34e7609ccf0fa95564e3a8eb97
+/**
+ * Deployer: 0xEEE5BEC08C3fd98535183c247931FFC439778A7C
+ * Deployed to: 0xe73b5cDEBB5dbC4206D525AdF41aAc84Ab6fB019
+ * Transaction hash: 0x3edf0adddefe6dd7856a5fe92d4dd1e44408f8d6e2fc81fffea9b25e5a4f8a02
+*/

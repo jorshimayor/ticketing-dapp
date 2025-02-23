@@ -1,27 +1,48 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '../../../lib/supabase';
 
-// POST handler to verify attendee
 export async function POST(request: Request) {
   const { email } = await request.json();
+
   if (!email) {
     return NextResponse.json({ error: 'Email is required' }, { status: 400 });
   }
 
-  // Query Supabase for the attendee
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('attendees')
     .select('*')
     .eq('email', email.toLowerCase())
     .single();
 
+  if (error) {
+    return NextResponse.json({ error: 'Database query failed' }, { status: 500 });
+  }
+
   if (!data) {
     return NextResponse.json({ error: 'Attendee not found.' }, { status: 404 });
   }
 
-  if (data) {
+  // If the attendee has already minted, prevent minting
+  if (data.registered) {
     return NextResponse.json({ error: 'Attendee has already minted their ticket.' }, { status: 400 });
   }
 
+  // If the attendee hasn't minted, allow them to mint, and mark them as registered
+  // (but this part happens AFTER the minting process in the frontend, not here in the verify endpoint)
   return NextResponse.json({ success: true, attendee: data });
+}
+
+// POST handler to update attendee status to "minted"
+export async function updateAttendeeStatus(email: string) {
+  const { error } = await supabase
+    .from('attendees')
+    .update({ registered: true })
+    .eq('email', email.toLowerCase());
+
+  if (error) {
+    console.error('Error updating attendee status:', error.message);
+    return false;
+  }
+
+  return true;
 }

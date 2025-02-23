@@ -9,11 +9,11 @@ contract DeployEventTicket is Script {
         vm.startBroadcast();
         
         EventTicket eventTicket = new EventTicket(
-            "Event Ticket",  // name
+            "Event Ticket", // name
             "ETKT",         // symbol
             100,            // maxSupply
             0.01 ether,     // price
-            "https://api.example.com/metadata/" // baseTokenURI
+            "ipfs://bafkreiecyl25mfeoz3hvksh2gglidv5ab47l6bztawjm53apg3es3fcccy/" // baseTokenURI
         );
         
         vm.stopBroadcast();
@@ -21,6 +21,8 @@ contract DeployEventTicket is Script {
     }
 }
 
-// Deployer: 0xDEFdb1c256FC638408a21044015b7b3fdD2E19f1
-// Deployed to: 0x06785D59FAE4a2CB267B0afE3Ce6F1896872Bb48
-// Transaction hash: 0x863a3b1538cea1827073fef5aaeb14426070bc6c741476145fe6dd30d1f6c7a0
+/**
+ * Deployer: 0xEEE5BEC08C3fd98535183c247931FFC439778A7C
+ * Deployed to: 0x3C30f4dFB2370eFC5f8E0064181a370A1C9315d2
+ * Transaction hash: 0xd8059e98b73ae7be976fd6c81b0afd1aee8cb559db0cce7b5e11304b375312ef
+*/

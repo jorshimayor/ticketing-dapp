@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-
 import { ethers, formatEther } from "ethers";
 import { useConnectWallet } from "@web3-onboard/react";
-
 import { EVENT_TICKET_ADDRESS, eventTicketABI } from "@/constants";
 
 export default function MintPage() {
@@ -17,9 +15,10 @@ export default function MintPage() {
   const [ticketPrice, setTicketPrice] = useState<string>("0.0");
   const [txHash, setTxHash] = useState<string>("");
   const [mintingError, setMintingError] = useState<string>("");
+  const [ownerAddress, setOwnerAddress] = useState<string>("");
 
   // Fetch ticket price when wallet is connected
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchPrice = async () => {
       if (wallet) {
         try {
@@ -32,8 +31,9 @@ export default function MintPage() {
             eventTicketABI,
             ethersProvider
           );
-          const price = await contract.price();
-          setTicketPrice(formatEther(price));
+
+          const price = await contract.price(); // Fetch price
+          setTicketPrice(formatEther(price)); // Format and set price in KAIA
         } catch (error) {
           console.error("Error fetching ticket price: ", error);
           setMintingError("Failed to fetch ticket price. Please try again.");
@@ -41,6 +41,31 @@ export default function MintPage() {
       }
     };
     fetchPrice();
+  }, [wallet]);
+
+  // Fetch owner address when wallet is connected
+  useEffect(() => {
+    const fetchOwner = async () => {
+      if (wallet) {
+        try {
+          const ethersProvider = new ethers.BrowserProvider(
+            wallet.provider,
+            "any"
+          );
+          const contract = new ethers.Contract(
+            EVENT_TICKET_ADDRESS,
+            eventTicketABI,
+            ethersProvider
+          );
+
+          const owner = await contract.owner();
+          setOwnerAddress(owner.toLowerCase());
+        } catch (error) {
+          console.error("Error fetching owner address: ", error);
+        }
+      }
+    };
+    fetchOwner();
   }, [wallet]);
 
   // Verify attendee status
@@ -55,6 +80,7 @@ export default function MintPage() {
     setIsVerified(false);
 
     try {
+      console.log("Verifying attendee for email:", email);
       const response = await fetch("/api/verify-attendee", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,6 +88,7 @@ export default function MintPage() {
       });
 
       const result = await response.json();
+      console.log("Verification result:", result);
 
       if (response.ok && result.success) {
         setIsVerified(true);
@@ -106,21 +133,25 @@ export default function MintPage() {
       // Fetch ticket price
       const price = await contract.price();
 
-      // Estimate gas for the transaction
-      const gasEstimate = await contract.mintTicket.estimateGas({
-        value: price,
-      });
-
       // Send transaction with gas estimate
       const tx = await contract.mintTicket({
         value: price,
-        gasLimit: gasEstimate,
       });
+
+      // Wait for the transaction to be mined
       const receipt = await tx.wait();
 
       if (receipt.status === 1) {
         setTxHash(receipt.transactionHash);
         alert("Ticket minted successfully!");
+
+        // Call the API to update attendee status to "minted"
+        await fetch("/api/update-attendee-status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        setIsVerified(true);
       } else {
         setMintingError("Transaction failed. Please try again.");
       }
@@ -138,6 +169,37 @@ export default function MintPage() {
     }
   };
 
+  // Toggle sale function (owner-only)
+  const toggleSale = async () => {
+    if (!wallet) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const ethersProvider = new ethers.BrowserProvider(wallet.provider, "any");
+      const signer = await ethersProvider.getSigner();
+      const contract = new ethers.Contract(
+        EVENT_TICKET_ADDRESS,
+        eventTicketABI,
+        signer
+      );
+
+      const tx = await contract.toggleSale();
+      await tx.wait();
+      alert("Sale toggled successfully!");
+    } catch (error) {
+      console.error("Error toggling sale:", error);
+      alert("Failed to toggle sale. Check console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Determine if connected wallet is the owner
+  const isOwner =
+    wallet && wallet.accounts?.[0].address.toLowerCase() === ownerAddress;
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <h1 className="text-2xl my-5 font-bold text-blue-600 text-center">
@@ -150,6 +212,22 @@ export default function MintPage() {
             <h2 className="text-2xl font-semibold mb-6 text-center">
               Secure Your Spot
             </h2>
+
+            {/* Owner-only Sale Toggle Section */}
+            {isOwner && (
+              <section className="mb-8">
+                <h3 className="text-xl font-semibold mb-4">Owner Controls</h3>
+                <button
+                  onClick={toggleSale}
+                  disabled={loading}
+                  className={`w-full bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-200 ${
+                    loading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {loading ? "Processing..." : "Toggle Sale"}
+                </button>
+              </section>
+            )}
 
             {/* Verification Section */}
             <section className="mb-8">
@@ -189,7 +267,7 @@ export default function MintPage() {
               <h3 className="text-xl font-semibold mb-4">Mint Your Ticket</h3>
               <div className="mb-4">
                 <p className="text-gray-700">
-                  <strong>Ticket Price: </strong> {ticketPrice} ETH
+                  <strong>Ticket Price: </strong> {ticketPrice} KAIA
                 </p>
               </div>
               <button

@@ -10,7 +10,6 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  */
 
 contract EventPOAP is ERC721, Ownable {
-    
     // Mapping to track whether a ticket has already been redeemed for a POAP NFT
     mapping(uint256 => bool) public ticketRedeemed;
     

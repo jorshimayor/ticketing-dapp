@@ -49,7 +49,7 @@ export default function Home() {
             </svg>
             <h3 className="text-xl font-semibold my-2">Secure Minting</h3>
             <p className="text-gray-600">
-              Mint your NFT tickets securely using Ethereum blockchain
+              Mint your NFT tickets securely using Kaia blockchain
               technology, ensuring authenticity and ownership.
             </p>
           </div>
