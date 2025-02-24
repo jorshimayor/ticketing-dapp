@@ -41,10 +41,10 @@ export default function ActualRedeemPage() {
       await tx.wait();
 
       setSuccessMessage("POAP redeemed successfully!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error redeeming POAP:", error);
       setRedeemError(
-        error?.reason || "Failed to redeem POAP. Please try again."
+        (error as { reason?: string })?.reason || "Failed to redeem POAP. Please try again."
       );
     } finally {
       setLoading(false);
