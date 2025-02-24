@@ -74,9 +74,8 @@ export default function MyTicketsPage() {
               }
               fetchedTickets.push({ tokenId, metadata, verified });
             }
-          } catch (e) {
-            // Token doesn't exist (or wasn't minted yet), so ignore
-            continue;
+          } catch {
+           
           }
         }
 

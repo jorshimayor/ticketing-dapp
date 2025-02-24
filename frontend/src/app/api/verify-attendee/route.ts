@@ -31,18 +31,3 @@ export async function POST(request: Request) {
   // (but this part happens AFTER the minting process in the frontend, not here in the verify endpoint)
   return NextResponse.json({ success: true, attendee: data });
 }
-
-// POST handler to update attendee status to "minted"
-export async function updateAttendeeStatus(email: string) {
-  const { error } = await supabase
-    .from('attendees')
-    .update({ registered: true })
-    .eq('email', email.toLowerCase());
-
-  if (error) {
-    console.error('Error updating attendee status:', error.message);
-    return false;
-  }
-
-  return true;
-}
