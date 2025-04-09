@@ -22,3 +22,7 @@ A decentralized application (dApp) for event ticketing and POAP (Proof of Attend
   - Solidity
   - Foundry for development and testing
   - OpenZeppelin contracts
+
+
+- **Website:** https://ticketingdapp.vercel.app/
+- **Demo:** https://drive.google.com/file/d/1q_SCfyLtS6GFJb_UdwHOmD3l1wskQ_bw/view?usp=drive_link
